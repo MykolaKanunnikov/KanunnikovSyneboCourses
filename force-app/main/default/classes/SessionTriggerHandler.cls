@@ -50,7 +50,8 @@ public with sharing class SessionTriggerHandler {
     private static Map<Id,Decimal> newNumRelatedSes(){
         List<AggregateResult> newResult = [SELECT Room__r.Event_Place__r.Id, 
                                            COUNT(Id) counter 
-                                           FROM Session__c 
+                                           FROM Session__c
+                                           WHERE Session__c.Event_Place_counter_switch__c = true
                                            GROUP BY Room__r.Event_Place__r.Id];
         Map<Id,Decimal> newValues = new Map<Id,Decimal>();
             for (AggregateResult agr : newResult) {

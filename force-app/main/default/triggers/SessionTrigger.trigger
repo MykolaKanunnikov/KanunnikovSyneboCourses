@@ -1,5 +1,7 @@
 trigger SessionTrigger on Session__c (before insert, before update, after insert, after delete) {
 
+    public static Boolean isScheduled = true;
+
     switch on Trigger.operationType {
         when BEFORE_INSERT{
             SessionTriggerHandler.archiveChecker(Trigger.new);
@@ -10,10 +12,14 @@ trigger SessionTrigger on Session__c (before insert, before update, after insert
             }
         }
          when AFTER_INSERT{
-            SessionTriggerHandler.sessionNumUpdate();
+            if(!isScheduled){
+                SessionTriggerHandler.sessionNumUpdate();
+            }
         }  
          when AFTER_DELETE{
-            SessionTriggerHandler.sessionNumUpdate();
+            if(!isScheduled){
+                SessionTriggerHandler.sessionNumUpdate();
+            }
         } 
     }
 }
