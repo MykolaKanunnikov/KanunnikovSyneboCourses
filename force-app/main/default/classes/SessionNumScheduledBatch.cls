@@ -1,6 +1,6 @@
 public with sharing class SessionNumScheduledBatch implements Database.Batchable<SObject>, Schedulable {
     
-    String query = 'SELECT Id, Number_of_related_sessions__c FROM Event_Place__c';
+    String query = 'SELECT Id, Number_of_related_sessions__c FROM Event_Place__c WHERE Allow_statistics__c = true';
     
     public SessionNumScheduledBatch() {
 
@@ -23,7 +23,8 @@ public with sharing class SessionNumScheduledBatch implements Database.Batchable
         List<AggregateResult> newValuesList = [SELECT Room__r.Event_Place__r.Id, 
                                           COUNT(Id) counter 
                                           FROM Session__c
-                                          WHERE Session__c.Event_Place_counter_switch__c = true
+                                          WHERE Session__c.Event_Place_counter_switch__c = true AND
+                                                Room__r.Event_Place__r.Allow_statistics__c = true
                                           GROUP BY Room__r.Event_Place__r.Id];
 
         Map<Id,Decimal> newValuesMap = new Map<Id,Decimal>();

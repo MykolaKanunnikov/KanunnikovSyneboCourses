@@ -1,25 +1,21 @@
-trigger SessionTrigger on Session__c (before insert, before update, after insert, after delete) {
-
-    public static Boolean isScheduled = true;
+trigger SessionTrigger on Session__c (before insert, before update, 
+                                      after insert, after delete, after update) {
 
     switch on Trigger.operationType {
         when BEFORE_INSERT{
-            SessionTriggerHandler.archiveChecker(Trigger.new);
+            SessionTriggerHandler.archiveCheckerBeforeInsert(Trigger.new);
         } 
         when BEFORE_UPDATE{
-            if(SessionTriggerHandler.isDateChanged(Trigger.new)){
-                SessionTriggerHandler.archiveChecker(Trigger.new);
-            }
+            SessionTriggerHandler.archiveCheckerBeforeUpdate(Trigger.new, Trigger.old);
         }
          when AFTER_INSERT{
-            if(!isScheduled){
-                SessionTriggerHandler.sessionNumUpdate();
-            }
+            SessionTriggerHandler.sessionNumUpdate();
         }  
          when AFTER_DELETE{
-            if(!isScheduled){
-                SessionTriggerHandler.sessionNumUpdate();
-            }
+            SessionTriggerHandler.sessionNumUpdate();
         } 
+        when AFTER_UPDATE{
+            SessionTriggerHandler.enqueueJobOnDateUpdate(Trigger.new, Trigger.old);
+        }
     }
 }
