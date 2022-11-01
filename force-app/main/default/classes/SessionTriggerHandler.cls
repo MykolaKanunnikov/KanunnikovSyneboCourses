@@ -3,7 +3,7 @@ public with sharing class SessionTriggerHandler {
 
     }
 
-    public static Boolean isScheduled = true;
+    public static Boolean isScheduled = false;
 
     public static void archiveCheckerBeforeInsert (List<Session__c> newList){
         if (isDateInThePast(newList)) {
