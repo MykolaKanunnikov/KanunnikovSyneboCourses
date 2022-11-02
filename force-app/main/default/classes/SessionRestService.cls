@@ -1,6 +1,6 @@
 @RestResource (urlMapping='/kanunnikov/*')
-global class FirstNamedCredentialsClass {
-    public FirstNamedCredentialsClass() {
+global class SessionRestService {
+    public SessionRestService() {
 
     }
     //workbench: /services/apexrest/kanunnikov
