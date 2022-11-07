@@ -1,9 +1,9 @@
-@RestResource (urlMapping='/kanunnikov/*')
+@RestResource (urlMapping='/sessionsrestservice/*')
 global class SessionRestService {
     public SessionRestService() {
 
     }
-    //workbench: /services/apexrest/kanunnikov
+    //workbench: /services/apexrest/sessionsrestservice
     @HttpGet
     global static void getSessionsOnWeek() {
         List<Session__c> s = [SELECT Id, Name 
@@ -17,7 +17,7 @@ global class SessionRestService {
     }
 
 
-    //workbench: /services/apexrest/kanunnikov?id=a097Q0000033II5QAM (use id from get method)
+    //workbench: /services/apexrest/sessionsrestservice?id=a097Q0000033II5QAM (use id from the get method)
     @httpDelete
     global static void deleteSession(){
         Map<String,String> paramsMap = RestContext.request.params;
@@ -26,7 +26,7 @@ global class SessionRestService {
         delete s;
     }
 
-    //workbench: /services/apexrest/kanunnikov 
+    //workbench: /services/apexrest/sessionsrestservice 
     //JSON sample:
     //{
     //    "place": "restplace",
@@ -49,7 +49,7 @@ global class SessionRestService {
         insert sessionToInsert;       
     }
 
-    //workbench: /services/apexrest/kanunnikov 
+    //workbench: /services/apexrest/sessionsrestservice 
     //JSON sample (use id from get method):
     //{
     //    "id": "a097Q0000031qJOQAY",
