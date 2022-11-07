@@ -8,7 +8,7 @@ public with sharing class ExternalCommentsHandler implements Queueable {
         Http http = new Http();
         HttpRequest request = new HttpRequest();
         
-        request.setEndpoint('https://jsonplaceholder.typicode.com/comments');
+        request.setEndpoint('callout:Legacy/comments');
         request.setMethod('GET');
         HttpResponse response = http.send(request);
         

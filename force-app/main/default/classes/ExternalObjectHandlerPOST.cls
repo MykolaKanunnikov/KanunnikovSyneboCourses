@@ -7,7 +7,7 @@ public with sharing class ExternalObjectHandlerPOST implements Queueable, Databa
         Http http2 = new Http();
         HttpRequest request2 = new HttpRequest();
 
-        request2.setEndpoint('https://jsonplaceholder.typicode.com/posts');
+        request2.setEndpoint('callout:Legacy/posts');
         request2.setMethod('POST');
 
         List<ExternalObject__c> objectsToPOST = [SELECT body__c, id__c, title__c, userId__c

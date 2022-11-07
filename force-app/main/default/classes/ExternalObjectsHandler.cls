@@ -8,11 +8,12 @@ public with sharing class ExternalObjectsHandler implements Queueable, Database.
         Http http = new Http();
         HttpRequest request = new HttpRequest();
         
-        request.setEndpoint('https://jsonplaceholder.typicode.com/posts');
+        request.setEndpoint('callout:Legacy/posts');
         request.setMethod('GET');
         HttpResponse response = http.send(request);
         
         if(response.getStatusCode() == 200) {    
+            //System.JSON.deserialize under the hood of the parse method
             List<JSONPlaceHolder> results = JSONPlaceHolder.parse(response.getBody());
             List<ExternalObject__c> extObjects = new List<ExternalObject__c>();
 
@@ -22,15 +23,8 @@ public with sharing class ExternalObjectsHandler implements Queueable, Database.
                                                      title__c = j.title,
                                                      userId__c = j.userId));
             }
-        insert extObjects;
+        upsert extObjects;
         System.enqueueJob(new ExternalObjectHandlerPOST());
-        }
-    }
-
-    public static void cleanBeforeQueue(){
-        List<ExternalObject__c> objectsToDelete = [SELECT id FROM ExternalObject__c];
-        if (!objectsToDelete.isEmpty()) {
-            delete objectsToDelete;
         }
     }
 
