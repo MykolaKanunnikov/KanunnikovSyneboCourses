@@ -29,40 +29,25 @@ global class SessionRestService {
     //workbench: /services/apexrest/sessionsrestservice 
     //JSON sample:
     //{
-    //    "place": "restplace",
-    //    "room": "restroom",
-    //    "session": "restsession"
+    //    "Name": "restsession",
+    //    "Room__c": "a067Q000007EphuQAC"   
     //}
     @httpPost
     global static void createSession(){
-        Map<String,String> paramsMap = RestContext.request.params;
-        
-        Event_Place__c placeRest = new Event_Place__c(Name = paramsMap.get('place'));
-        insert placeRest;
-        
-        Room__c roomRest = new Room__c(Name = paramsMap.get('room'),
-                                       Event_Place__c = placeRest.id);
-        insert roomRest;
-
-        Session__c sessionToInsert = new Session__C(Name = paramsMap.get('session'),
-                                                    Room__c = roomRest.id); 
+        Session__c sessionToInsert = (Session__c) JSON.deserialize(RestContext.request.requestBody.toString(), Session__c.class);
         insert sessionToInsert;       
     }
 
     //workbench: /services/apexrest/sessionsrestservice 
     //JSON sample (use id from get method):
-    //{
-    //    "id": "a097Q0000031qJOQAY",
-    //    "description": "the most incredible session forever",
+    //{      
+    //    "id": "a097Q0000031qPmQAI",
+    //    "Description__c": "the most incredible session forever"
     //}
-    @httpPut
-    global static void changeSessionDescription(){
-        Map<String,String> paramsMap = RestContext.request.params;
-        String sId = paramsMap.get('id');
-        Id sessionId = Id.valueOf(sId);
-        String description = paramsMap.get('description');
-        Session__c s = new Session__c(Id = sessionId, Description__c = description);
-        update s;
+    @httpPatch
+    global static void editSessionDescription(){
+        Session__c sessionUpdate = (Session__c) JSON.deserialize(RestContext.request.requestBody.toString(), Session__c.class);
+        update sessionUpdate;
     }
 }
 
