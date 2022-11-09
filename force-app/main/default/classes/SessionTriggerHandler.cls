@@ -1,7 +1,4 @@
 public with sharing class SessionTriggerHandler {
-    public SessionTriggerHandler() {
-
-    }
 
     public static Boolean isScheduled = false;
 
