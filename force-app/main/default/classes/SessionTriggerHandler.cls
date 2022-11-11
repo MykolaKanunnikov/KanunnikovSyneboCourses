@@ -1,7 +1,5 @@
 public with sharing class SessionTriggerHandler {
 
-    public static Boolean isScheduled = false;
-
     public static void archiveChecker (List<Session__c> newList){
         for (Session__c s : newList) {
             if (s.Session_Date__c < DateTime.now() && s.name.contains('ARCHIVE')) {
@@ -12,20 +10,18 @@ public with sharing class SessionTriggerHandler {
 
     @future
     public static void sessionNumUpdate (Set<Id> idOfLastModifiedPlaces){
-        if(!isScheduled){
-            Map<Id,Decimal> oldValues = oldNumRelatedSes(idOfLastModifiedPlaces);
-            Map<Id,Decimal> newValues = newNumRelatedSes(idOfLastModifiedPlaces);
-            List<Event_Place__c> updateable = new List<Event_Place__c>();
-            Set<Id> setone = oldValues.keySet();        
-            for (Id key : setone) {
-                if(oldValues.get(key) != newValues.get(key)){
-                    updateable.add(new Event_Place__c (Id = key,  
-                                                       Number_of_related_sessions__c = newValues.get(key)));
-                }
+        Map<Id,Decimal> oldValues = oldNumRelatedSes(idOfLastModifiedPlaces);
+        Map<Id,Decimal> newValues = newNumRelatedSes(idOfLastModifiedPlaces);
+        List<Event_Place__c> updateable = new List<Event_Place__c>();
+        Set<Id> setone = oldValues.keySet();        
+        for (Id key : setone) {
+            if(oldValues.get(key) != newValues.get(key)){
+                updateable.add(new Event_Place__c (Id = key,  
+                                                   Number_of_related_sessions__c = newValues.get(key)));
             }
-            if(!updateable.isEmpty()){
-                update updateable;
-            }
+        }
+        if(!updateable.isEmpty()){
+            Database.SaveResult[] dur = Database.update(updateable);
         }
     }
 
@@ -63,7 +59,7 @@ public with sharing class SessionTriggerHandler {
             }
         return oldValues;
     }
-
+    
     private static Map<Id,Decimal> newNumRelatedSes(Set<Id> idOfLastModifiedPlaces){
         List<AggregateResult> newResult = [SELECT Room__r.Event_Place__r.Id, 
                                            COUNT(Id) counter 
@@ -78,6 +74,7 @@ public with sharing class SessionTriggerHandler {
         return newValues;
     }
 
+    @TestVisible
     private static Boolean isDateChanged (List<Session__c> newList, List<Session__c> oldList){
         for(Session__c sn : newList){
             for (Session__c so : oldList) {

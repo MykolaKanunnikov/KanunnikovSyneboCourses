@@ -12,7 +12,14 @@ public with sharing class ExternalObjectHandlerPOST implements Queueable, Databa
 
         List<ExternalObject__c> objectsToPOST = [SELECT body__c, id__c, title__c, userId__c
                                                  FROM ExternalObject__c
-                                                 WHERE id__c = '1'];       
+                                                 WHERE id__c = '1'];
+        if(Test.isRunningTest()){
+            ExternalObject__c e = new ExternalObject__c (body__c = 'test',
+                                                         id__c = '1', 
+                                                         title__c = 'test', 
+                                                         userId__c = 'test');
+            objectsToPOST.add(e);
+        }       
         List<String> jsonToPostList = new List<String>();
         for (ExternalObject__c e : objectsToPOST) {
             jsonToPostList.add(JSON.serialize(e));

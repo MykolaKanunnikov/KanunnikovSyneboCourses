@@ -1,8 +1,6 @@
 @RestResource (urlMapping='/sessionsrestservice/*')
 global class SessionRestService {
-    public SessionRestService() {
 
-    }
     //workbench: /services/apexrest/sessionsrestservice
     @HttpGet
     global static void getSessionsOnWeek() {
@@ -22,8 +20,9 @@ global class SessionRestService {
     global static void deleteSession(){
         Map<String,String> paramsMap = RestContext.request.params;
         String sessionId = paramsMap.get('id');
-        Session__c s = [SELECT id FROM Session__c WHERE Id =:sessionId FOR UPDATE];
+        List<Session__c> s = [SELECT id FROM Session__c WHERE Id =:sessionId FOR UPDATE];
         delete s;
+        RestContext.response.statusCode = 200;
     }
 
     //workbench: /services/apexrest/sessionsrestservice 
@@ -35,7 +34,8 @@ global class SessionRestService {
     @httpPost
     global static void createSession(){
         Session__c sessionToInsert = (Session__c) JSON.deserialize(RestContext.request.requestBody.toString(), Session__c.class);
-        insert sessionToInsert;       
+        insert sessionToInsert;
+        RestContext.response.statusCode = 200;       
     }
 
     //workbench: /services/apexrest/sessionsrestservice 
@@ -48,6 +48,7 @@ global class SessionRestService {
     global static void editSessionDescription(){
         Session__c sessionUpdate = (Session__c) JSON.deserialize(RestContext.request.requestBody.toString(), Session__c.class);
         update sessionUpdate;
+        RestContext.response.statusCode = 200;
     }
 }
 

@@ -1,4 +1,4 @@
-public with sharing class ExternalCommentsHandler implements Queueable {
+public with sharing class ExternalCommentsHandler implements Queueable, Database.AllowsCallouts {
     public ExternalCommentsHandler() {
 
     }
