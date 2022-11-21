@@ -8,7 +8,7 @@ public with sharing class SessionTriggerHandler {
         }     
     }
 
-    @future
+    //@future
     public static void sessionNumUpdate (Set<Id> idOfLastModifiedPlaces){
         Map<Id,Decimal> oldValues = oldNumRelatedSes(idOfLastModifiedPlaces);
         Map<Id,Decimal> newValues = newNumRelatedSes(idOfLastModifiedPlaces);

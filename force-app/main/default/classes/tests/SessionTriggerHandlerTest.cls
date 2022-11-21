@@ -1,5 +1,5 @@
 @isTest
-private class SessionTriggerHandlerTest{
+public class SessionTriggerHandlerTest implements HttpCalloutMock{
 
     @isTest
     private static void testArchiveCheckerInsert(){
@@ -17,14 +17,26 @@ private class SessionTriggerHandlerTest{
         Assert.areEqual(true, res, 'Checkbox should be checked but it is not'); 
     }
     
-    @isTest
+    @isTest(SeeAllData=true)
     private static void testSessionNumUpdate(){
         List<Session__c> s = TestDataFactory.getNewSession(1);
         Test.startTest();
         Database.SaveResult[] dsr = Database.insert(s);
-        Database.DeleteResult[] ddr = Database.delete(s);
+        String sessionId4query = String.valueOf(dsr[0].getId());
+        List<Session__c> sList = [SELECT Id, 
+                                  Room__r.Event_Place__r.Number_of_related_sessions__c
+                                  FROM Session__c
+                                  WHERE id = :sessionId4query];
+        Decimal firstNum = sList[0].Room__r.Event_Place__r.Number_of_related_sessions__c;
+        Database.DeleteResult ddr = Database.delete(dsr[0].getId());
+        String placeId4query = String.valueOf(sList[0].Room__r.Event_Place__r.Id);
+        List<Event_Place__c> pList2 = [SELECT Id, Number_of_related_sessions__c
+                                       FROM Event_Place__c
+                                       WHERE Id = :placeId4query];
+        Decimal secondNum = pList2[0].Number_of_related_sessions__c;
         Test.stopTest();
-        Assert.areEqual(dsr[0].isSuccess(), ddr[0].isSuccess(), 'DML exception');
+        Assert.areEqual(dsr[0].isSuccess(), ddr.isSuccess(), 'DML exception');
+        Assert.areEqual(secondNum+1, firstNum, 'Unexpected number');
     }
     
     @isTest
@@ -78,4 +90,16 @@ private class SessionTriggerHandlerTest{
         List<ExternalObject__c> eoActual = [SELECT id__c, title__c FROM ExternalObject__c WHERE id__c = '1'];
         Assert.areEqual(eoExpected[0].title, eoActual[0].title__c, 'Expected object missing');
     }
+
+        //ExternalObjectsHandler called from SessionTriggerHandler
+        public static HTTPResponse respond(HTTPRequest req) {
+            Assert.areEqual('callout:Legacy/posts', req.getEndpoint());
+            Assert.areEqual('GET', req.getMethod());
+            String resJSON = '[ { "userId": 1, "id": 1, "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit", "body": "quia et suscipit\\nsuscipit recusandae consequuntur expedita et cum\\nreprehenderit molestiae ut ut quas totam\\nnostrum rerum est autem sunt rem eveniet architecto" }, { "userId": 1, "id": 2, "title": "qui est esse", "body": "est rerum tempore vitae\\nsequi sint nihil reprehenderit dolor beatae ea dolores neque\\nfugiat blanditiis voluptate porro vel nihil molestiae ut reiciendis\\nqui aperiam non debitis possimus qui neque nisi nulla" }]';
+            HttpResponse response = new HttpResponse();
+            response.setBody(resJSON);
+            response.setStatusCode(200);
+            return response;
+        }
+    
 }

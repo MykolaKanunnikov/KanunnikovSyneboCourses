@@ -4,8 +4,14 @@ private class ExternalObjectHandlerPOSTTest implements HttpCalloutMock {
     private static void executeTest(){
         Test.startTest();
         Test.setMock(HttpCalloutMock.class, new ExternalObjectHandlerPOSTTest());
-        System.enqueueJob(new ExternalObjectHandlerPOST());
+        Id jobId = System.enqueueJob(new ExternalObjectHandlerPOST());
         Test.stopTest();
+        List<AsyncApexJob> job = [SELECT NumberOfErrors
+                                  FROM AsyncApexJob
+                                  WHERE Id = :jobId];
+        
+        Assert.areEqual(0, job[0].NumberOfErrors, 'Error(s) during the job');
+
     }
 
     public static HTTPResponse respond(HTTPRequest req) {

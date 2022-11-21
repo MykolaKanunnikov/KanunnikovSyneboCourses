@@ -23,7 +23,8 @@ public with sharing class ExternalObjectsHandler implements Queueable, Database.
                                                      title__c = j.title,
                                                      userId__c = j.userId));
             }
-        upsert extObjects;
+        //External ID - id__c
+        upsert extObjects id__c;
         
         if(!Test.isRunningTest()){
         System.enqueueJob(new ExternalObjectHandlerPOST());
